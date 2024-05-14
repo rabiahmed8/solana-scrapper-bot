@@ -5,12 +5,21 @@ const RAYDIUM_PUBLIC_KEY = "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8";
 const SESSION_HASH = 'QNDEMO' + Math.ceil(Math.random() * 1e9); // Random unique identifier for your session
 let credits = 0;
 
+const URI = 'https://serene-sleek-diamond.solana-mainnet.quiknode.pro/94e6b5d29f2e957ecc305c51c19feb52d85f0d56/';
+const WSS = 'wss://serene-sleek-diamond.solana-mainnet.quiknode.pro/94e6b5d29f2e957ecc305c51c19feb52d85f0d56/';
+
+// const URI = 'https://api.mainnet-beta.solana.com';
+// const WSS = 'wss://api.mainnet-beta.solana.com';
+
 const raydium = new PublicKey(RAYDIUM_PUBLIC_KEY);
-// Replace HTTP_URL & WSS_URL with QuickNode HTTPS and WSS Solana Mainnet endpoint
-const connection = new Connection(`https://api.mainnet-beta.solana.com`, {
-    wsEndpoint: `wss://api.mainnet-beta.solana.com`,
+
+const connection = new Connection(URI, {
+    wsEndpoint: WSS,
     httpHeaders: {"x-session-hash": SESSION_HASH}
 });
+if(connection) {
+    credits+=50;
+}
 
 // Monitor logs
 async function main(connection, programAddress) {
@@ -18,6 +27,7 @@ async function main(connection, programAddress) {
     connection.onLogs(
         programAddress,
         (obj) => {
+            // console.log("Logging",obj)
             // console.log("Logs:", obj);
             const { logs, err, signature } = obj;
             if (err) return;
@@ -40,7 +50,7 @@ async function fetchRaydiumAccounts(txId, connection) {
             commitment: 'confirmed'
         });
     
-    credits += 100;
+    credits += 50;
     
     const accounts = tx?.transaction.message.instructions.find(ix => ix.programId.toBase58() === RAYDIUM_PUBLIC_KEY).accounts;
 
